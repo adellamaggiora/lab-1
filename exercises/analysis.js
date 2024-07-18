@@ -1,4 +1,4 @@
-const setLib = require('./libraries/set-multiset')
+const setLib = require('../libraries/set-multiset')
 
 /**
  * image è un multinsieme

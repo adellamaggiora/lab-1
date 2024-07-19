@@ -45,3 +45,26 @@ const myFun = x => x**2;
 const prima = funDer(myFun);
 
 console.log(prima(3))
+
+
+// derivazione simbolica
+// abbiamo trattato con i numeri, non con i simboli
+
+// iniziamo con la derivazione di un polinomio per capire meglio
+// come si rappresenta 2x^2 + 1?
+
+// [1, 0, 2]
+// si memorizzano i coefficienti, è un convenzione scelta da noi, ci potrebbero essere altri modi
+
+ function calcolaP(p, x) {
+    let res = 0
+    for (let i = 0; i < p.length; i++) {
+        const esponente = i;
+        const coefficiente = p[i];
+        res += coefficiente * x**esponente;
+    }
+    return res;
+ }
+
+
+ console.log(calcolaP([1, 2, 3], 2))

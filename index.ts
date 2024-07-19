@@ -1,77 +1,47 @@
-/*
-Dato un albero k-ario T, definire una funzione ricorsiva taglia_nodi_interni che,
-preso in input un intero positivo m, modifica T in-place, 
-rimuovendo tutti i nodi interni (e i rispettivi sottalberi) che hanno meno di m figli.
+// derivazione numerica vs derivazione simbolica
+
+// derivazione simobilca simbolo => simbolo
+// ad esempio: derivata di x^2 => 2x
+
+// cos'è la derivata di una funzione in un punto
+// limite tra rapporto della funzione e intervallo quando l'intervallo tende a zero
+// oppure il rapporto di una funzione tra un epsilon
+
+
+// la derivata misura quanto velocemente la funzione cambia in quel punto.
+
+// rapporto incrementale in un punto
+// Δy/Δx = (f(x1) - f(x2)) / x1 - x2
 
 
 
-Notazione
-
-Si codifichi l'albero k-ario T come visto a lezione, 
-perciò un albero è rappresentato da un oggetto così formato {val: , figli:[...]}
-
-Si noti inoltre che l'albero vuoto è codificato con il valore null.
-
-
-
-Esempio
-*/
-
-
-var T3 = {
-    val: 0, figli: [
-        {
-            val: 1, figli: [
-                { val: 3, figli: [] },
-                { val: 4, figli: [] },
-            ]
-        },
-        {
-            val: 2, figli: [
-                { val: 5, figli: [] }
-            ]
-        },
-    ]
+function derDx(f, x, epsilon = 0.001) {
+    return (f(x + epsilon) - f(x)) / epsilon;
 }
 
-/*
-Taglia tutti i nodi interni di T3 che hanno meno di 2 figli
-taglia_nodi_interni(T3, 2);
-
-Perciò T3 dopo la chiamata di taglia_nodi_interni sarà così formato:
-
-
-
-    {
-    val: 0, figli: [
-        {
-            val: 1, figli: [
-                { val: 3, figli: [] },
-                { val: 4, figli: [] },
-            ]
-        }]
-};
-
-il nodo interno 2 è stato rimosso, così come il suo sottalbero
-*/
-
-function taglia_nodi_interni(t, m) {
-    if (!t) {
-        return null;
-    }
-
-    if (t.figli.length < m) {
-        return null;
-    }
-
-    for (let i = 0; i < t.figli.length; i++) {
-        let figlio = t.figli[i];
-        figlio = taglia_nodi_interni(figlio, m)
-    }
-
-    return t
+function derSx(f, x, epsilon=0.001) {
+    return (f(x) - f(x - epsilon)) / epsilon;
 }
 
-// taglia_nodi_interni(T3, 2)
-// console.log(JSON.stringify(T3))
+function der(f, x, epsilon = 0.001) {
+    const dx = derDx(f, x, epsilon);
+    const sx = derSx(f, x, epsilon);
+    const tolerance = epsilon * 10
+    if (Math.abs(dx - sx) < tolerance) { // Incrementato il margine di tolleranza
+        return (dx + sx) / 2;  // Restituisce la media delle due derivazioni per maggiore precisione
+    }
+    return null;  // Se le derivazioni non sono sufficientemente vicine, restituisce null
+}
 
+// scrivere una funzione che restituisce la funzione derivata prima
+
+function funDer(g, epsilon=0.001) {
+    return (x) => der(g, x , epsilon);
+}
+
+
+const myFun = x => x**2;
+
+const prima = funDer(myFun);
+
+console.log(prima(3))

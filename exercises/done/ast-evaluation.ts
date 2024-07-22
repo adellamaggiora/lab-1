@@ -1,8 +1,8 @@
 // abstract syntax tree
 // https://ruslanspivak.com/lsbasi-part7/lsbasi_part7_ast_01.png
-interface INode { val: string | number, sx?: INode, dx?: INode };
+interface Nodo { val: string | number, sx?: Nodo, dx?: Nodo };
 
-const ast: INode = {
+const ast: Nodo = {
     val: "-",
     sx: {
         val: "*",
@@ -32,7 +32,7 @@ function evalOp(bop: string, op1: number, op2: number): number {
     return eval(`${op2} ${bop} ${op1}`);
 }
 
-function postOrderVisit(t: INode) {
+function postOrderVisit(t: Nodo) {
     if (!t) {
         return;
     }
@@ -50,7 +50,7 @@ function postOrderVisit(t: INode) {
     }
 }
 
-function evaluateAst(ast: INode) {
+function evaluateAst(ast: Nodo) {
     postOrderVisit(ast);
     return stack[0]
 }

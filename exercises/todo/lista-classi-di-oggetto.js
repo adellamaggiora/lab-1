@@ -10,7 +10,7 @@ const lambo = new Car();
 
 /**
  * versione ricorsiva proposta da @adellamaggiora
- * qualcuno propone un altro modo?
+ * qualcuno propone un altro modo? @todo
  */
 function getObjClasses(obj) {
     if (!obj) {

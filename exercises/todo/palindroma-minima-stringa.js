@@ -18,13 +18,15 @@
 
 function isPalindroma(x) {
     let result = true;
-    for (let i = 0, j = x.length - 1; i < x.length; i++, j--) {
-        if (j <= i) {
-            break;
-        };
-        if (x[i] !== x[j]) {
-            result = false;
-            break;
+    if (x?.length > 1) {
+        for (let i = 0, j = x.length - 1; i < x.length; i++, j--) {
+            if (j < i) {
+                break;
+            };
+            if (x[i] !== x[j]) {
+                result = false;
+                break;
+            }
         }
     }
     return result;

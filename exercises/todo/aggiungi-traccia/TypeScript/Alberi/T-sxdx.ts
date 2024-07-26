@@ -1,21 +1,21 @@
 interface TreeNode {
     val: string
-    sx ? : TreeNode
-    dx ? : TreeNode
+    sx? : TreeNode
+    dx? : TreeNode
 }
 
-function sxdx(T: TreeNode): [string, string] {
-    let leftConcatenation: string = T.val // Concatenazione dei valori a sinistra
-    let rightConcatenation: string = T.val // Concatenazione dei valori a destra
-    // Se esiste un sottoalbero sinistro, concateniamo i valori a sinistra
-    if (T.sx) {
-        const sx = sxdx(T.sx)
-        leftConcatenation += sx[0]
+function sxdx(tree: TreeNode | undefined): [string, string] {
+
+    if (!tree) {
+      return ['', '']
     }
-    // Se esiste un sottoalbero destro, concateniamo i valori a destra
-    if (T.dx) {
-        const dx = sxdx(T.dx)
-        rightConcatenation += dx[1]
-    }
-    return [leftConcatenation, rightConcatenation]
+
+    let left: string = tree.val;
+    let right: string = tree.val;
+
+    left += sxdx(tree.sx)[0]
+    right += sxdx(tree.dx)[1]
+
+    return [left, right];
+
 }

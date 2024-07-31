@@ -1,0 +1,31 @@
+class PuntoCartesiano{
+  constructor(x, y){
+    this.x = x
+    this.y = y
+  }
+
+  //metodi
+  dist(q){
+    return (q.x - this.x)**2 + (q.y - this.y)**2
+    //(x2 - x1)^2 - (y2 - y1)^2
+  }
+
+  translate(q){
+    //(x1 + x2, y1 + y2)
+    this.x += q.x
+    this.y += q.y
+    return [this.x, this.y]
+  }
+
+  zero(){
+    this.x = 0
+    this.y = 0
+    return [this.x, this.y]
+  }
+}
+
+let q = new PuntoCartesiano(2, 2)
+let p = new PuntoCartesiano(1, 1)
+console.log(p.dist(q))// stampa 2
+console.log(p.translate(q))//stampa [3, 3]
+console.log(p.zero())//stampa [0, 0]

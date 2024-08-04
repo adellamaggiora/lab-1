@@ -1,0 +1,1001 @@
+/*
+//LEZIONE 28: parte finale
+
+const { NOMEM } = require("dns");
+
+
+//generatori
+
+//Quando definiamo una funzione lei ritorna un valore e lesecuzione della funzione finisce e se voglio eseguirla piu volte devo chiamarla piu volte. Ci sono dei casi in cui voglio restiture un valore dalla funzione, metterla in pausa da dove ho ritornato e riprendela da qui senza ricominciare la computazione
+
+//I generatori hanno questo ruolo. Si dichiarano con function* e dentro il suo corpo (e solo qui!) si puo usare il comando yield "al posto del return", e questo yield restituisce il valore dell espressione ma quando viene rinvocato la computazione ricomicia da dove ho smesso.
+
+//es:
+
+function* range(a,b) { 
+  var i=a; 
+
+  while (i<b) {yield i++;} 
+
+}
+
+//Lei mi restituisce l intervallo tra a incluso e b escluso, ricordandosi da dove si era arrivati.
+
+//per fare questa cosa di pausa-play si usa il metodo next() dell oggetto generatore di tale funzione. Il generatore è un oggetto che ha due proprieta: value che è il valore che lo yield sta restituendo, e done che mi dice se la computazione è finita o no
+
+var x = range(4,8); //assegno la funzione a x, ma ancora non l ho eseguita, per eseguirla uso il metodo next(), che ritorna un oggetto con proprieta value che ha valore dello yield e la proprieta done che mi dice se la computazione è finita o no, cioe se posso eseguire altri yield in particolare. Quando non posso eseguire piu yield quindi non posso ritornare valore avro come valore undefined e done diventerà true.
+
+//OSS
+
+console.log(x); //stampa Object [Generator] {} un oggetto generale di tipo generatore, che non è un normale oggetto inaftti lui è iterabile mentre i normali oggetti no
+
+//il metodo x.next() esegue la funzione finchè non trova yield
+
+console.log(x.next()) //stampa {value: 4, done: false}
+
+//se richiamo x.next() ho
+
+console.log(x.next()); //stampa {value: 5, done: false}
+
+
+x.next()
+
+console.log(x.next()); //stampa { value: 7, done: false }
+
+//a un certo punto esco dal while, quindi non posso eseguire yield nel corpo e done diventa true (ho finito la computazione) e value diventa undefined:
+
+console.log(x.next()); //stampa { value: undefined, done: true }
+
+//da ora in poi tutti gli x.next sono { value: undefined, done: true }.
+
+//come detto la computazione si mette in pausa ogni volta che trova yield e infatti nell esempio sopra il generatroe non si scorda il valore di i a cui eravamo arrivati allo scroso yield 
+
+
+//E' raro chiamare un generatore con il .next, solitamente si usa il for(... of ...). Il for in su un generatore con un console.log non mi stampa nulla 
+
+//si usa anche var arr = [...range(4,8)] usando l operatore di spread, che in pratica è come se lo spread invocasse ripetutamente il .next()
+
+//OSS quando in generale uso il for of su un array, sotto js si crea un generatore mi scorre gli elementi dell array
+
+
+//esistono i generatori infiniti: devo solo fare in modo che lo yield è sempre eseguito: quindi posso usare un while(true), che ovviamnete non  si ferma mai; i generatori infiniti mi servono tipo per generare successioni di numeri...
+
+
+
+
+
+
+//LEZIONE 29
+
+//Volta sccorsa abbiamo parlato dei generatori che in parole povere è una funzione che si puo  metter in pausa e riprendere in un secondo momento: tutto cio grazie a yield che ritorna il valore attuale al chiamante e poi ricomicia la computazione da dove si è arrivati.
+
+//i generatori infiniti sono utili quando voglio una "computazione infinita", cioe voglio eseguire yield un numero infinito di volte, tale cosa si fa per esempio con un while(true)
+
+//Es: se voglio i primi n numeri primi, definisco un generatore che mi restituisce tutta la succesione dei primi e poi la chiamo quante volte voglio con il metodo next usando un for per esempio
+
+//se voglio ricominciare la computazione dall inzio? tipo ho un generatore che genera la succesione dei num primi, se ora voglio stampare i primi 3 primi e poi i primi 7 primi come faccio? Devo reistanziare, reinvocare il generatore altrimenti la computazione continua da dove è stata lasciata
+
+
+
+
+
+//Valori e riferimenti
+
+//quando chiamo una funzione che manipola una variabile globale di tipo standard, il contenuto di tale variabile non viene modificato dalla funzione, se invece non è di tipo standard, quindi per esempio un tipo array il valore dell array è modificato dalla funzione: i tipi base hanno usa semntica per valore cioe alla funzione viene passato una copia del valore della variabile; i tipi complessi hanno semnatica per riferimento, cioe alla funzione viene passato il riferimento all array stesso
+
+//es
+
+var a = 5
+var b = 5
+var c = a;
+
+//nella locazione di memoria di a e b è salvato il valore 5, nella locazione di memoria di c è copiato il valore di a e quindi anche c ha 5 nella sua locazione di memoria
+
+var a = [1,2,3]
+var b = [1,2,3]
+var c = a
+
+// in a è salvato l indirizzo di memoria in cui è salvato l array, in b anche: a==b da false perche a e b hanno salvato dentro indirizzi di memoria diversi; quandoo facccio var c = a salvo in c l indirizzo di  meomria che è salvato in a, infatti a==c da true
+
+//es
+
+function comply(p) {
+  p.età++;
+}
+
+var pippo = {nome: "pippo", età: 35}
+
+console.log(comply(pippo));
+
+//ora la proprieta eta in pippo ha valore 36, perche la funzione modifica: infatti in pippo è salvato il rifermineto alla locazine di memoria dell oggetto...ok
+
+//OSS
+
+function comply2(p) {
+  p = {nome: p.nome, età: p.età+1};
+}
+
+var pippo = {nome: "pippo", età: 35}
+
+comply2(pippo)
+
+//ora pippo ha un eta di 35: la variabile pippo punta ad alpha, ma p punta a beta...ok
+
+
+//il concetto di riferimento si apllica anceh alle strutture dati: quando definisco un albero nel modo visto: con oggetti con chiavi val, sx, dx... ma gli alberi sono strutture dati in cui ogni oggetto appare in un solo posto: ogni nodo compare come valore solo del campo sx o dx del padre...
+
+//nei grafi invece lo stesso oggetto puo comparire in piu campi, pensa a un nodo su cui incidono piu archi
+
+//rappresentiamo i grafi come {nodi: array dei nodi, archi: array degli archi}, un nodo come {val: x}, e un arco come {da: n1, a: n2}, per ricordare meglio:
+
+//nodi
+var n1={val: 1}, n2={val: 2}, n3={val: 3}, n4={val: 4}, n5={val: 5}
+
+//archi
+var a={da: n1, a: n2}, b={da: n1, a: n3}, c={da: n3, a: n5},
+d={da: n3, a: n4}, e={da: n4, a: n5}, f={da: n5, a: n2}
+
+//grafo
+var G={nodi: [n1, n2, n3, n4, n5], archi: [a, b, c, d, e, f]}
+
+//OSS l arco a e l arco b nella chiave da entrambi si riferiscono allo stesso nodo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Costruttori
+
+//Comodi quando si parla di riferimenti
+
+//quando avevamo definito un albero o un grafo, per esempio avevamo scritto il grafo con una determinta struttura, ma se qualcuno mi da un grafo con le chiavi chiemate in altro modo le funzioni non funzionano più...
+
+//quando volgio costruire oggetti di una determinta struttura usiamo i costruttori: funzioni che costruiscono i mie oggetti invece di farlo "a mano", ed evito anche errori nella scrittura
+
+//es per costriure archi di un grafo:
+
+function arco(n1,n2) {
+  return {da: n1, a: n2};
+}
+
+//questa cosa funziona bene perche anceh se sto creando la rco nella funzione è come se lo stessi facendo sa mano perche n1 e n2 sono riferimenti ai nodi che vogliono
+
+//Siccome anche le proprieta nwgli oggetti puntano a locazioni d memoria, possiamo fare in modo che u oggetto abbia proprieta di tipo funzione:
+
+var ogg = { a: x => x+1, b: function(x) {return x-1}, zero(x) {return x - x;} }
+
+//dove a è un riferimento alla funzione, e l ultimo modo di farlo negli oggetto si invoca con ogg.zero
+
+//OSS: fino ad esso abbiamo sempre chiamato funzioni all interno di oggetti, quando chiamo console.log sto chiamando la funzione nella chiave (o proprietà) log dell oggetto console... quindi cosole math ecc sono variabili globali pre-dichiarate nell aambiente di esecuzione
+
+//possiamo fae esperimenti con console.log(console), console.log(Math)...
+
+//sicccome questi sopra sono eggetti, possiamo aggiungere nostre funzioni a questoggetti, come si fa normalmente per impostare nuove chiav in un oggetto:
+
+Math.marco = n => n*n
+
+console.log(Math.marco(9)) //stampa 81
+
+//OSS: le funzioni di Math sono dette funzioni pure, cioe non hanno effetti collaterali: non modifica qualsiasi cosa gli passi; per esempio .push sugli array modifica l array... 
+
+
+
+
+
+
+
+
+
+//LEZIONE 30
+
+//continuiamo
+
+console.log("ciao")
+
+const temp = console.log; //salvo la fuznione di default di console.log in una variabile
+
+console.log = () => {}; //una funzione che non fa nulla: sto silenziando il console.log, e da qui in poi i console.log non fanno piu nulla
+
+console.log("ciao di nuovo")
+
+console.log = temp; //ora console.log ha ripreso le sue funzionalità originale
+
+
+
+//ora,
+//dichiaro il "costruttore"
+
+function persona (n, e){
+  
+  function comply(p) {
+    p.età++;
+  }
+  
+  return {nome: n, eta: e, comply: comply, // comply: (p) => p.età++
+  };
+
+}
+
+let pippo = persona("pippo", 30)
+let pluto = persona("pluto", 21)
+
+//function comply(p) {
+  //p.eta++;
+//}
+
+//comply(pippo) //e aumento l eta di pippo
+
+//vogliamo pero includere le funzioni da usare sulle persone nel costruttore:
+
+//pippo.comply = comply; //dentro l oggetto pippo ho anche la funzione comply e per metterla in tutte le persone la dichiaro direttamente nel costruttore (posso farlo anche fuori). Per invocalra sul pippo tale funzione ccome faccio?
+
+pippo.comply(pippo); //e aumento la sua età
+
+
+//ma non è estetico fare pippo.compleanno(pippo)...
+
+//il prob è che comply non sa nulla del suo contesto, quindi serve un qualcosa che permette a una funzione che fa parte di un oggetto di accedere ai campi del suo stesso oggetto: vorrei scrivere pippo.compleanno e basta per aumentare l eta di pippo
+
+//JS permette di fare cio con la parola chiave this che posso usare nel corpo di queste funzioni, che punta al ruferimento dell oggetto di cui la funzione è proprieta, riscriviamo:
+
+function persona(n, e) {
+  return { nome:n , eta: e, compleanno: function() {this.eta++;} }
+}
+
+//quindi ora per invocare compleanno poso fare:
+
+pippo.compleanno(); //e aumento l eta di pippo, e posso invocaer su ogni oggetto definito dal costruttore sopra
+
+//OSS: per usare il this devo definire una funzione con function e non posso usare una lamda-espressione cioe non posso scrivere compleanno: () => this.eta++: se uso la lamda-espressione il this punta al riferimento alla funzine stessa
+
+
+
+//Facciamo un esempio piu complicato:
+
+//quando abbiamo definito i grafi avevamo fatto delle liste enormi per definire i nodi a mano, per essere sicuri che siano fatti tutti allo stesso modo, e per essere più veloci posso usare un costruttore, e ci posso anche mettere le funzioni al suo interno
+
+
+//Operatore new:
+//consewnte di chiamare una funzione costrutture (un vero costruttore non un "costrutttore": prima era semplicemente una funzione che mi ritornava un riferimento all oggetto creato a cui noi abbiamo affibiato l aggettivo di costruttore, ora definiamo un costruttore nel senso "formlae" di js): js crea un nuovo riferimento in cui costriure il nuovo oggetto; la sinttassi è come quella delle funzioni piu e per convenzione i nomi dei costruttori si danno con la lettera maiuscola:
+
+function Persona(n, e) {
+  this.nome = n;
+  this.eta = e;
+  this.compleanno = function () {this.eta++;};
+}
+
+//quando a dichiarare una variabile usando new, il costruttore alloca una nuova loc di memoria e me la ritorna, infatti non devo fare neanche un return: console.log(Persona(Marco, 25)) mi stamp al oggetto anche se non c è scrittoil return: lo fa direttamente js
+
+let tommaso = new Persona("Tommaso");
+
+//OSS: dentro il costruttore senza che io scrivo nulla js è come se scrivesse in automatico: let this = {};  e poi alla fine return this; e qunado faccio let tommy = Persona.. a tommy viene dato il nuovo riferimento che js ha creato appositamnete (grqzie al comando new)
+
+//LE FUNZIONI COSTRUTTORI HANNO NOMI CHE INIZIANO CON LA LETTERA MAIUSCOLA: IMPORTANTE STA COSA PER UNA CHIAREZZA MENTALE NITIDA DEL CODICE
+
+
+//OSS se stampo un oggetto creato dal "costruttore" mi stampa come sempre un oggetto, se invece stampo il costruttore prima dell oggetto mi stampa anche Persona, come se il console.log sapesse il costruttore che ha creato questo oggetto: in uqalche senso so quali oggetti hanno lo stesso tipo, dove per tipo intendo il costruttore che ha creato l oggetto: è utile sapere chi li ha costruiti perche so tutto quello che riguarda la struttura di quell oggetto, serve standardizare il modo di costruire per capirsi meglio
+
+//OSS
+
+function Persona(n, e) {
+  //lancio errore se mi danno un eta negativa
+  if(e < 0) {throw "Ei amo, l' eta deve essere positiva";}
+  
+  this.nome = n;
+  this.eta = e;
+  this.compleanno = function () {this.eta++;};
+}
+
+
+//OSS: quando dichiaro un array, per esempio, da qualche parte c è una funzione costruttore Array che prende quanti imput si vuole e mi crea un array per come è fatto e lo fa phni volta nello steeso modo, quindi tutte le funzioni definite su un array si possono estendere a tutti gli array... però sull array posso chiamare diversi metodi: push, concat...
+
+//se definisco un array arr e chiamo console.log(arr) sul promt i metodi detti sopra non sono scritti (ma .lenght lo ho e questo metodo è infatti definito dal costruttore drgli array)... mhh, dove sono sti metodi? li definisce il costruttore degli array? ma doce gl ha mesi? perchhe non li vediamo?...
+
+//Questi metodi (funzioni) stanno nel prototipo, non all interno dell oggetto stesso: non ce li ha messi il costruttore; è come se fossero a un livello piu profondo
+
+//Un prototipo è un meccanismo di js che permette di sccedere alle proprieta di un oggetto (es arr.push). Ci sono 3 regole:
+//1- ogni oggettto ha un prototipo che ha un oggrtto
+//2- quando voglio accedere a una chiave di un oggetto se non lo trova al primo livello lo va a cercare nel prototipo, che è un oggetto, e quindi anche lui sicccome è un oggetto avrà un prototipo e cosi via finche non la trovo o non finisco di scorrere i prototipi dei prototipi dei prototipi (catena dei prototipi si chiama sta cosa)...  
+//3- l oggetto Object è un oggetto che non ha prototipo: è il prototipo di un oggetto in generale (quindi la catena si interrompe qui)
+
+//In qualche modo il prototipo è il costruttore di defoult della struttura che mi sta costruendo in modo che tutte le istanze di quella struttura abbiamo le chiavi del prototipo in comune: per esempio il metodo .toString lo posso applicare a tuttiperchè è un metodo di Object, quindi lo avranno tutti!
+
+//possiamo chiedere chi è il prototipo di un istanza e mi da un puntatore al prototipo (cioe al costruttore)
+
+//per vedere se due oggetti sono costruiti dallo stesso costrutture chiedcome sopra e confronto perche tanto ho riferimenti
+
+//Pensiamo: ho definito il costruttore Perosna, ma posso definire il costruttore studente che chiamera Persona e aggiungewrà dei campi... e cosi via, quinsi tra due istanze posso anche scoprire, chiedendo, a quale livello di parentela sono.
+
+*/
+
+
+
+
+
+
+
+
+
+//LEZIONE31
+
+
+//Il prototipo è un campo (che si chiama prototype) che tutti gli oggeti hanno, tranne Object che non ha prototipi, ed è qui che si ferma sempre la catena dei prototipi. Tutta questa roba della catena dei prototipi serve per rendere facile l estenzione dell insieme delle chiavi: voglio creare una nuova classe di array che oltre le chiavi che hanno, voglio aggiungere altre chiavi, e lo faccio una volta per farle tutte: posso costruire comportamenti molto complessi tipo da un costruttore Persona posso estendere un cosrtuttore studente che ha come prototipo Persona ma ha anche chiavi peculiari di Studenti e così via...
+
+//costruttore per array fatto da noi
+
+function Arraye(...arr) { //lo spread mi permette di ricevere in imput un numero qualsiasi di imput
+
+  for (let i = 0; i < arr.length; i++) {
+    this[i] = arr[i];
+  }
+  
+  this.len = arr.length;
+ 
+  this.push = function(...elements) {
+    
+    for(let j = 0; j<elements.length; j++){
+      this[j + this.lenght] = elements[j];
+      
+    }
+  
+    this.lenght += elements.lenght;
+
+    
+  }
+
+  
+  
+
+  
+}
+
+let a1 = new Arraye(1, 2, 3);
+console.log(a1); //stampa Arraye { '0': 1, '1': 2, '2': 3, len: 3, push: [Function (anonymous)] }
+
+
+//qui non ho usato nessun prototipo, in realta ho definito un prototipo
+
+let a2 = new Arraye(); //array vuoto
+
+//i campi push in a1 e a2 puntano entrambi a una funzione, puntano alla stessa funzione? Controlliamo:
+
+console.log(a1.push === a2.push); //false, perche ogni volta che faccio new sto creando nuovi riferimenti e quindi ogni volta ho un riferimento a una funzione push diversa, ma questo non è il comportamento sperato perche ora se voglio modificare roba devo modificarla in ogni istanza e non posso modificare una volta per tutte
+
+//se definisco 2 array utilizzando il costruttore di js ho:
+
+let arr3 = [1, 2, 3];
+let arr4 = [1, 2, 3];
+
+console.log(arr3.push === arr4.push) //true, perche questa push non è definita nel costruttore dell array come abbiamo fatto sopra, ma sta nel oggetto prototipo dell array e quindi la funziona è una sola, e quindi un solo riferimento
+
+//per accedere a un prototipo di un iggetto si accede alla sua proprieta __proto__, oppure invocando Object.getPrototypeOf(oggetto), 2 è piu standard e funziona su qualunque macchina:
+
+
+//OSS se uso for in su un oggetto, non mi stampa le chiavi del prototipo, ma solo quelle proprie, lo stesso vale per Object.keys(oggetto), Object.entries(oggetto) ecc
+
+
+
+//Tutte le funzioni sono anch esse oggetti e quindi hanno un prototipo, e per esempio una proprieta di una funzione è un campo speciale prototype (proprio .prototype) che contiene un oggetto pronto per fare da prototipo a tutti gli oggetti inizializzati dalla funzione, quindi new assegna automaticamnete come prototipo dell oggetto creato il prototypr della sua funzuione costruttore, nel caso nostro: Persona.prototype == pippo.__proto__ è true! Vado a creare un legame tra la funzione costruttrice Persona e tuti gli oggetti creati con questa funzione
+
+//es
+/*
+function Persona(n, e) {
+  this.nome = n;
+  this.eta = e;
+ 
+}
+
+let pippo = new Persona("pippo", 20);
+let pluto = new Persona("pluto", 30);
+
+//per estendere cose a tutti gli oggetti faccio:
+
+Persona.prototype.compleanno = function() { //ho aggiunto una chiave al prototype della funzione, cioe all prototipo di tutti gli oggetti che definisco con Persona
+  this.eta++;
+}
+
+//equivalente a pippo.__proto__.compleanno = function() {this.eta++;}, e in modo piu standard              Object.getPtoypeof(pippo).compleanno = function() {this.eta++;}
+
+
+//ora tutti gli oggetti creati con Persona hanno il metodo compleanno:
+
+pippo.compleanno()
+console.log(pippo.eta) //ora è 21
+*/
+
+//se voglio aggiungere una mia funzione a tutti gli array, prendo il prototypre del costruttore e gli metto dentro una nuova chiave che avra la mia funzune e tale funzione sara supportata da qualsiasi array mai creato, mentre se io aggiungo this.mia = 2 nerl corspo della funzione Persona non è supportato in ogni perosna ceh ho definito: il primo è una cosa universale, il secondo è locale
+
+/*
+Array.prototype.miaf = function() {
+  return "ciao"
+}
+
+let arr = [1, 2, 3];
+
+console.log(arr.miaf())
+*/
+
+
+
+/*
+//noi non faremo così, ma useremo cose piu comode (ma ste cose bisogna saperle perche sotto js funziona cosi)
+
+//per fare tutta questa roba di creare oggetti tutti nello stesso modo, per etenderli tutto nello stesso modo ecc... si usano le classi, introdotto nello js moderno a livello di sintassi però, sotto funziona esattamente come visto prima. Gli oggetti sono creati con new ecc come prima
+
+//La differenza è puramente sintattica: scriviamo la stessa cosa fatta prima ma con questa nuova sintassi: questa cosa e quella sorpa sono sintatticamente equivalenti
+//
+
+class Persona {
+
+  constructor(nome, eta) { //è il costruttore, quello che prima avevo chiamato function Perosna
+    this.nome = nome;
+    this.eta = eta;
+  }
+  //fuori da constructor metto i metodi che voglio abbiamo questa famigliaa di oggettti
+  compleanno() {this.eta++;}
+}
+
+var pippo = new Persona("pippo", 35);
+pippo.compleanno()
+console.log(pippo.eta)
+
+//come prima posso aggiungere roba:
+
+Persona.prototype.saluta = function() { console.log('Ciao, mi chiamo ${ this.nome }!');
+                                      }
+
+pippo.saluta()
+
+
+
+
+//Terminilogia: Persona è una classe, pippo è un oggetto, pippo è un istanza di Persona (o pippo è di tipo persona) (il prototipo di pippo è il prototipo di tutti gli oggetti di tipo persona)
+
+typeof pippo // object
+
+pippo instanceof Persona //true
+
+pippo istanceof Array //false
+
+
+*/
+
+
+
+
+
+
+//LEZIONE 32
+
+//Ridiciamo quello detto: l uso di class è solo una questione sintattica ma a livello computazionale le cose sono dette sopra come funzionano.
+//Quando dichiaro una classe js mi chrea una nuovo rifrmento alla locazione di memoria in cui è l oggetto this e tramite il costruttore lo arricchisce con le chiavi che ho dichiarato, mentre i metodi  definiti fuori dal costruttore (compleanno in questo caso) vengono appesi nel prototype della classe tramite l operatore new: l’operatore new assegna automaticamente come prototipo dell’oggetto creato, il prototype della sua funzione costruttore.; ricordiamo che Persona.prototype == pippo.__proto__ è true
+
+/*
+class Persona {
+
+  constructor(nome, eta) { //è il costruttore, quello che prima avevo chiamato function Perosna
+    this.nome = nome;
+    this.eta = eta;
+  }
+  //fuori da constructor metto i metodi che voglio abbiamo questa famigliaa di oggettti
+  compleanno() {this.eta++;}
+}
+
+
+//Abbiamo visto come si dichiara una classe, ma si puo anche assegnare una classe a una variabile che ha quel nome: js permette di farlo perchè tanto fa la stessa cosa lui
+
+var Perosna = class {
+  constructor(nome, eta) {
+    this.nome = nome;
+    this.eta = eta;
+  }
+
+  compleanno() {this.eta++}
+
+}
+
+var pippo = new Persona("pippo", 35);
+
+
+
+
+//La prog orientata agli oggetti serve per fare cose piu complesse: modello concetti che voglio usare come oggetti, speigamo meglio: voglio creare un sistema di calcolo geometrico, posso definie una classe Poligono, che avra dei campi: nlati, angoli..., lunghezza lati... e poi delle funzioni su tali oggetti. Ora voglio anche creare classi specifiche per esempio quadreatoecc
+
+class Studente extends Perosna {
+  laurea() {return "Evvia"}
+}
+
+//Il prototipo studente ha il prototipo di Persona e lo estende aggiungendo la funzione laurea, che è accessibile solo alle istanze della classe Studente, mentre le istanze proprie di Persona non posso accedere a laurea
+
+var ugo = new Studente("Ugo", 19)
+
+ugo.laurea() //ok
+
+pippo.laurea() //TypeError: pippi.laura() is not defined
+
+
+
+//Ora tutto quello che andremo a dire è pura conseguenza della catena dei prototipi
+
+class StMagistrale extends Studente {
+  laurea() {return "Stra-evviva galattico"}
+}
+
+var pia = new StMagistrale("Pia", 23);
+
+//pia ha la funzione laurea che si chiama uguale a quella di stuedente, cosa stampa il comando seguente?
+
+pia.laurea() //stampa "Stra-evviva galattico", perche quando chiamo .laurea() js cerca nelle chiavi proprie e poi nella catena dei prototipi e usa il primo metodo che si chiama laurea che in questo caso è il laurea in magistrale e non il laurea di studente (questo è un comportamneto generale: laurea non va a sovrascrivere il laura di prima ma semplicemente si trova prima nella catena dei prototipi, che va dai piu recenti ai meno recenti, e quindi viene pescato prima)
+
+//cio che non ridefinisco viene ereditato; usando delete sul prototipo posso cancellare nella sottoclasse metodi definiti nella superclasse (la super classe è la classe che viene estesa per crreare la sottoclasse)
+
+//OSS per estendere il costruttore:
+
+class StMagistrale extends Studente {
+  constructor (nome, eta, triennale) {
+    super(nome, eta)
+    this.tiennale = triennale
+  }
+  laurea () { return super.laurea() + ", Evviva galattico"}
+}
+
+var pia2 = new StMagistrale("Pia2", 23, "Informatica");
+
+//la parola chiave super è un riferimento alla superclasse di un oggetto, come this è un riferimento all oggetto su cui il metodo è invocato
+
+//OSS una classe è una funzione, quindi super è una funzione
+
+
+
+
+//Non standard: posso inizializzare campi di una classe (proprieta di un oggetto) direttamente nella classe invce di assegnamenti a this.proprieta nel costruttore:
+
+class Persona {  //se non do un val di inizializzazione viene dato undefined
+  nome = "Pippo"
+  eta = 35
+}
+*/
+//ancora sul non standard: campi privati e pubblici: i nomi con # davanti sono visibili solo all interno della classe:
+
+class C {
+  #privato = "frocio"
+  pubblico = "gay"
+  bohx = function() {return this.#privato}
+}
+
+let boh = new C()
+
+boh.pubblico //ok
+
+//c.#privato //da errore, posso accedere solo all interno della classe
+
+
+console.log(boh.bohx()) //ok, posso usare i privati dentro la classe infatti
+
+//membri statici
+
+//proprieta con davanti la parola chiave static, sono proprieta di classe e non di oggetto:
+
+class Auto {
+  static benzina = 1.5;
+}
+
+var kia = new Auto();
+
+console.log(kia.benzina) //stampa undefined
+console.log(Auto.benzina) //stampa 1.5
+
+//gli static sono utili per esempio per tenermi il conto di quanti oggetti ho creato con questa classe facendo una cosa del tipo #istanze = 0 e poi incrementare con #istanze++ ogni volta che il costruttore viene invocato:
+
+class P {
+  static numeroP = 0;
+
+  constructor(nome, eta) {
+    this.nome = nome;
+    this.eta = eta;
+    P.numeroPersonas++;
+  }
+}
+
+var mario = new P("Mario", 34);
+var giuglio = new P("Giuglio", 23);
+var bohh = new P("Bohh", 45);
+
+console.log(P.numeroPersonas); //stampa 3
+
+
+
+
+
+//LEZIONE33
+
+//OSS instanceof mi fa scoprire se un oggetto è di quella classe
+
+//getter e setter sono metodi di accesso alle proprieta (riguardano gli oggetti in generale e non solo le classi)
+
+var o = {get x() {return 1}, set x(v) {;}}
+
+o.x //1
+o.x = 5 //5
+o.x //1
+//non serve che scrivo o.x() come si a solitamente qwuando ho proprieta che sono funzoni
+
+//con le classi:
+
+class Distanza {
+
+  static #MIGLIO=1.60934 // fattore di conversione, è sia statico che privato
+
+  #distanza=0 // in km
+
+  get km() { return this.#distanza}
+
+  set km(v) { this.#distanza=v}
+
+  get miglia() { return this.#distanza/Distanza.#MIGLIO}
+
+  set miglia(v) {this.#distanza=v*Distanza.#MIGLIO}
+}
+
+var d = new Distanza();
+
+d.km //0
+
+d.km = 5 //lui assegna a #distanza il valore 5 tramite set km(v)...
+
+d.km //5
+
+d.miglia //3.106855
+
+d.miglia = 3 //#distanza vale 3*1.60934 grazie alla set miglia(v)
+
+d.km //4.82802
+
+
+//OSS nessuno al di fuori della classe puo accede a distanza o a Miglio perche sono memebri privati!
+
+
+
+//Torniamo sui generatori: li posso anche avere dentro le classi e si definiscono con *metodo e si puo usaer yieldv
+
+//Es
+
+class Poesia {
+
+  #testo
+
+  constructor(t) {this.#testo=t}
+
+  *parole() {
+
+    var i=0
+
+    while (true) {
+
+      let f=this.#testo.indexOf(" ",i)
+
+      if (f>=0)
+
+        yield this.#testo.slice(i,f)
+
+      else {
+
+        yield this.#testo.slice(i)
+
+        break
+
+      }
+
+      i=f+1
+
+    }
+
+  }
+
+}
+
+var p=new Poesia("To be, or not to be, that is the question: Whether tis nobler in the mind to suffer the slings and arrows of outrageous fortunes")
+
+
+
+
+
+//Faccciamo un esempio: la classe Rational per gestirmi i numeri razionali, che ci serve per supportare le operazoni tra frazini
+
+class Rational {
+
+  #num;
+  #den;
+
+  constructor(num, den = 1) { //metto 1 di defoult a den cosi se non me lo danno gli viene assegnato 1
+    try {
+     Rational.#assicuraIntero(num);
+     } catch(e) {throw new NumeratorError("nummmmm")}
+
+    try{
+     Rational.#assicuraIntero(den);
+     } catch (e) {throw new DenominatorError("dennnn")}
+
+  if(den == 0) 
+    throw new DenominatorError("Denominatore nullo!")
+    
+    
+    this.#num = num;
+    this.#den = den;
+ 
+ 
+
+  
+  
+     
+
+    this.#simplify();
+    
+  }  
+
+
+  //mi serve un accesore per dopo quando dovro definire la classe integer altrimewnti non posso accedere a num pwrche è privato
+  getNum() {return this.#num};
+
+
+  
+    
+  
+  //metttiamo dei controllli sui numeri che ci danno:
+
+  static #assicuraIntero(n) { //lei la andro a cchiamare nel costruttore tramite this. cosi se trovo inìmput che non vanno bene interrompo direttamente la procedura; osserviamo che questa funzione mi serve per fare controlli sugli oggetti quindi non è una funzione specifica che usa funzioni specifiche di un istqnza, la posso definire come una funzione di classe trmite static
+
+    if(typeof n != "number") 
+      throw new Error()//("Il parametro deve essere un numero")
+    if(!Number.isInteger(n))
+      throw new Error()//("Il parametro deve essere un numero intero") 
+  }  
+
+  //metodo privato che mi fa la riduzione ai minimi termini
+
+  #simplify() { //simplify non devo dichiararla statica perche sto accedendo ai valori dell oggetto e quindi il suo agire dipende dall istanza che la invoca
+
+    let  m = Rational.#mcd(this.#num, this.#den);
+    //facciamo la divisione di num e den per m
+    this.#num /= m;
+    this.#den /= m;
+  }
+
+  //definiamo mcd, e la posso dichiarare statica peche non dipende dai valori dell istanza stessa
+
+  static #mcd(a, b) {
+    let c;
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+      
+      c = a % b;
+      a = b;
+      b = c;
+    }
+
+    return a;
+    
+  }
+
+  
+  
+  //voglio definire operazioni (metodi) tra oggetti diversi della stesssa classe, tipo nella classe Array c' e concat, qui vopglio sommarli, moltiplicarli ecc... ste cose dovranno essere pubblihe altrimwenti non è che sono utili
+
+
+  times(r) { //moltiplicazione; scrivo cosi perche vorrò chiamare r1.times(r2), si poteva definire anche come metodo  di classe Rational.times(r1, r2), ma èè bruttino
+    if (r instanceof Rational)
+      return new Rational(this.#num * r.#num, this.#den * r.#den);
+    throw new Error("L operatore è supportato solo tra razionali")
+  }  
+
+  //se ora provo a stampare un razionale mi stampa Razional {}, perche num e den sono private, e lui mi stampa questo perce va a chiamare il toString nel prototipo Object, se voglio gestire il toString faccio un overriding del metodo toString: lo ridefinisco in tale classe cosi quando lo chiama il primo a beccare è questo e usa quedto (l overriding esatto non è questo, è una sintasi leggermente diversa, dopo vediamo:  Fatto cosi devo scrivere console.log(r.toString()) e non solo il console.log)
+
+  toString() {
+
+    return `${this.#num}/${this.#den}` //gli facccio stampare cio che voglio io
+  }
+
+  toNumber() { //mi converte a numero in virgola
+    return this.#num / this.#den;
+  }
+
+  //OSS aver messo tutti i controlli nel costruttore ora mi permette di andae liscio
+
+  //Le altre operazioni ce le possiamo implementae da noi: plus, minus, div, abs
+
+}
+
+
+
+//Creiamo una sottoclasse di Rational (quando definisco una sottoclasse è un caso speciale della sopraclasse)
+
+class Integer extends Rational { //lei eredita tutti i metodi che abbiamo detto in rational
+
+  constructor(int) {
+    super(int, 1); //richaoimo il costruttore della classe madre
+  }
+
+  //modifichiamo il toString perche non voglio che sgtampi 12/1 coem in razinal ma solamnete 12:
+    
+
+  toString() {
+    return `${super.getNum()}` 
+  }
+
+  times(i) { //l algebra è la stessa della classe padre ma voglio che torni un intero e non un razi0onakel; voglio anche supportare la moltiplicazione tra interi e razionali
+    if(i instanceof Integer){
+      let r = super.times(i);
+      return new Integer(r.getNum())
+    } else
+      return super.times(i);
+  
+  }
+
+
+ 
+      
+    
+    
+}
+
+
+
+ 
+  
+  
+  
+    
+
+
+//Per gestire le eccezionik ora che abbiamo  fatto le classi: la classe Error di js è un errore generico, ma posso definire una mia struttura di erroree
+
+class NumeratorError extends Error {}
+
+class DenominatorError extends Error {}
+
+
+
+
+
+
+
+
+
+
+
+//LEZIONE 34
+/*
+
+class Tree {
+  #val
+  #sx
+  #dx
+
+  constructor() {
+    
+  }
+
+  //visita preorder, postorder, inorder
+
+  getLefthTree() {return this.#sx}
+
+
+}
+
+
+class BinarySearchTree extends Tree {
+  
+  //...
+    
+}
+
+*/
+
+
+//Implementiamo la classe multiinsieme che in js non c è ma usiomo strutture dati gia esistenti in js mettendoci una sovrastruttura sopra
+
+class MultiseError extends Error {}
+class ElementNotFound extends MultisetError{} //tale classe eredita tutto quello che ha la cxlasse Error di js
+
+
+class Multiset {
+
+  //mi serve una struttura dati interna su cui costruire, ma poi all esterno ci si interagisce come decido io con imetodi ecc; lo potrei fare come un array (soluzione semplice) ma introdiciamo una nuova struttura dati di js: Map
+  
+  static counter = 0; //mi conta quante istanze ho creato
+  
+  #map
+
+  constructor() {
+    if(Multiset.counter > 2)
+      throw new Error("Basta Multiset, ne ho troppi")
+    this.#map = new Map(); //ora lui è una mappa quindi posso usare i metodi di map per i miei scopi in quetsa classe
+    Multiset.counter++;
+  }
+
+  add(e) {
+    this.#map.set(e, this.#map.has(e) ? this.#map.get(e) + 1 : 1); //funziona perche va a sovrascivere
+    
+  }
+
+  remov(e) {
+    if(this.#map.has(e)) {
+      let n = this.#map.get(e);
+      if (n > 1) 
+        this.#map.set(e, n - 1); //va a sovrascrivere
+      else
+        this.#map.delete(e);
+    } else 
+      throw new ElementNotFound("Elemento non presente nel multinsieme");//qui lancio un errore
+    
+  }
+
+  mult(e) { //quante volte compare quell elemtento
+
+    if(this.#map.has(e))
+      return this.#map.get(e)
+    else return 0;
+    
+  }
+
+
+
+}
+
+//per la gestione degli errori è piu corretto (all epoca non avevamo fatto classi ecc), crearsi un sistema di gestione delle eccezioni tramite la classe Error di js, invece di lanciarlo direttamente con throw senza scrivere il new error cosi mi dice tutto js: dove è stato fatto ecc
+
+
+
+
+
+
+
+
+    
+
+
+
+  
+  
+
+
+  
+  
+    
+
+    
+
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

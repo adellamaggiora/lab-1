@@ -1,0 +1,135 @@
+/*
+Si scriva in TypeScript una funzione classifyElements che, dato un array omogeneo a di un qualche tipo (generico), 
+e una funzione classifier che, dato un valore del tipo degli elementi di a, restituisce un valore di tipo Category, 
+restituisca un oggetto con tre proprietà basate sui risultati della classificazione: 
+"positive", "negative", e "neutral". 
+Ogni proprietà sarà un array che contiene gli elementi di a classificati rispettivamente come positive, negative o neutral.
+
+
+
+Il tipo Category include soltanto i valori 'positive', 'negative', e 'neutral', e deve essere definito come parte dell'esercizio.
+
+
+
+Abbiate cura di annotare i tipi di tutte le dichiarazioni, evitando uso di any o unknown.
+*/
+
+//La soluzione la trovaate in basso  per evvitare spoiler; troverete piu di una soluzine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type Category = "positive"|"negative"|"neutral";
+
+/*
+interface Div<T> {
+    positive:T[],
+    negative:T[],
+    neutral:T[];
+}
+*/
+
+
+/*class Div<T> {
+  positive: T[];
+  negative: T[];
+  neutral: T[];
+
+  constructor([], [], []){
+    this.positive = [];  
+    this.negative = [];
+    this.neutral = [];
+    
+  }
+
+}
+*/
+
+//type Div<T> = {positive:T[], negative:T[], neutral:T[]}
+
+/*
+function classifyElements<T>(arr:T[], classifier:(e:T)=>Category): Div<T>{
+
+    let ris:Div<T> = {positive:[], negative:[], neutral:[]};
+    let el:T;
+    for(el of arr){
+        if(classifier(el)=="positive"){
+            ris.positive.push(el);
+        } else if (classifier(el)=="negative"){
+            ris.negative.push(el);
+        } else ris.neutral.push(el);
+    }
+
+    return ris;
+
+
+}
+*/
+
+type MioTipo<T>= {[key:string]:T[]};
+
+function classifyElements<T>(arr:T[], 
+classifier:(e:T)=>Category): 
+MioTipo<T>{
+
+
+
+    let ris:MioTipo<T> = {};
+    ris["positive"] = [];
+    ris["negative"] = [];
+    ris["neutral"] = [];
+    
+
+
+    let el:T;
+    for(el of arr){
+        if(classifier(el)=="positive"){
+            ris.positive.push(el);
+        } else if (classifier(el)=="negative"){
+            ris.negative.push(el);
+        } else ris.neutral.push(el);
+    }
+
+    return ris;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

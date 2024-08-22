@@ -76,7 +76,45 @@
         { term: "Keyword 'this'", definition: "`this` è una keyword che si riferisce all'oggetto dal quale viene chiamato un metodo, variando il suo valore a seconda del contesto di esecuzione." },
         { term: "Generatore", definition: "Un generatore è una funzione che può sospendere e riprendere la sua esecuzione, permettendo di iterare su una sequenza di valori mediante la keyword `yield`." },
         { term: "Scoping delle Dichiarazioni", definition: "Lo scoping delle dichiarazioni definisce il contesto in cui le variabili e le funzioni sono visibili e accessibili, come il `block scope` con `let` e `const`, o il `function scope` con `var`." },
-        { term: "Rappresentazione Albero K-ario", definition: "Un albero k-ario è una struttura dati in cui ogni nodo è rappresentato come `{ val, figli[] }`, dove `val` è il valore del nodo e `figli` è un array che contiene i riferimenti ai nodi figli, fino a un massimo di `k` figli per nodo." }
+        { term: "Rappresentazione Albero K-ario", definition: "Un albero k-ario è una struttura dati in cui ogni nodo è rappresentato come `{ val, figli[] }`, dove `val` è il valore del nodo e `figli` è un array che contiene i riferimenti ai nodi figli, fino a un massimo di `k` figli per nodo." },
+        { term: "Generics", definition: "I Generics in TypeScript permettono di creare componenti riutilizzabili che funzionano con vari tipi di dati, senza perdere la sicurezza del tipo. Un esempio comune è l'uso di `Array<T>` per indicare un array di elementi di tipo `T`." },
+        { term: "Promise", definition: "Una Promise è un oggetto che rappresenta il completamento o il fallimento di un'operazione asincrona e il suo valore risultante. Viene utilizzata per gestire operazioni asincrone in JavaScript." },
+        { term: "async/await", definition: "`async` e `await` sono parole chiave in JavaScript che semplificano il lavoro con Promises. `async` è utilizzato per dichiarare una funzione asincrona, e `await` per aspettare il completamento di una Promise." },
+        { term: "Closures", definition: "Una closure è una funzione che ha accesso alle variabili del suo scope esterno, anche dopo che la funzione esterna è stata eseguita. Questo permette di mantenere lo stato tra le chiamate di funzione." },
+        {
+        term: "Valori Primitivi", 
+        definition: `
+        In JavaScript, i valori primitivi sono i tipi di dati basilari che non sono oggetti e non possono essere modificati. I principali valori primitivi sono:
+        - **String**: Rappresenta una sequenza di caratteri. Esempio: "ciao", 'JavaScript'.
+        - **Number**: Rappresenta sia numeri interi che numeri in virgola mobile. Esempio: 42, 3.14.
+        - **Boolean**: Rappresenta un valore logico, che può essere true o false.
+        - **Undefined**: Una variabile non inizializzata o una proprietà inesistente ha il valore undefined.
+        - **Null**: Rappresenta intenzionalmente l'assenza di qualsiasi valore o oggetto. È un tipo primitivo che ha un solo valore: null.
+        - **Symbol**: Introdotto in ES6, un Symbol è un identificatore unico e immutabile, utilizzato spesso come chiave per proprietà di oggetto.
+        - **BigInt**: Introdotto in ES11 (ES2020), BigInt è un tipo che consente di rappresentare numeri interi più grandi di Number.MAX_SAFE_INTEGER. Viene creato aggiungendo n alla fine di un intero, ad esempio 123n.
+        `
+    },
+    { 
+        term: "Valori Mutabili", 
+        definition: `
+        In JavaScript, i valori mutabili sono i tipi di dati che possono essere modificati dopo essere stati creati. Gli oggetti e gli array sono esempi di valori mutabili. 
+        Quando si modifica un oggetto o un array, si modifica direttamente il contenuto della struttura dati senza cambiare il riferimento.
+        `
+    },
+    { 
+        term: "for...in vs for...of", 
+        definition: `
+        - **for...in**: Viene utilizzato per iterare sulle proprietà enumerabili di un oggetto o sugli indici di un array. È più adatto per oggetti, ma può essere utilizzato anche sugli array, anche se non è raccomandato.
+        - **for...of**: Viene utilizzato per iterare sugli elementi di un oggetto iterabile (come un array, una stringa, un set o una mappa). Non funziona sugli oggetti che non sono iterabili.
+        `
+    },
+    { 
+        term: "Eccezione", 
+        definition: `
+        Un'eccezione in JavaScript è un errore che si verifica durante l'esecuzione di un programma. Quando viene generata un'eccezione, l'esecuzione del programma viene interrotta e il controllo passa al gestore delle eccezioni, se presente. 
+        Le eccezioni possono essere gestite usando `try...catch` per evitare che il programma termini inaspettatamente.
+        `
+    }
     ];
 
     let currentIndex = 0;

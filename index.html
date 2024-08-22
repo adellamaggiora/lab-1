@@ -1,89 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flashcard App</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .flashcard {
-            border: 2px solid #333;
-            border-radius: 10px;
-            padding: 20px;
-            width: 300px;
-            text-align: center;
-            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
-        }
-        .flashcard h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .flashcard p {
-            font-size: 18px;
-            margin: 20px 0;
-            display: none;
-        }
-        .flashcard button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .flashcard {
+        border: 2px solid #333;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        text-align: center;
+        box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .flashcard h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .flashcard p {
+        font-size: 18px;
+        margin: 20px 0;
+        display: none;
+      }
+
+      .flashcard button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
     </style>
-</head>
-<body>
+  </head>
 
-<div class="flashcard">
-    <h2 id="term">Modulo</h2>
-    <p id="definition">Un modulo in JavaScript/TypeScript è un file che contiene codice che può essere importato ed esportato tra altri file, promuovendo la riusabilità e l'organizzazione del codice.</p>
-    <button id="show-def">Mostra Definizione</button>
-    <button id="next-card" style="display: none;">Prossima Flashcard</button>
-</div>
+  <body>
+    <div class="flashcard">
+      <h2 id="term">Modulo</h2>
+      <p id="definition">
+        Un modulo in JavaScript/TypeScript è un file che contiene codice che può
+        essere importato ed esportato tra altri file, promuovendo la riusabilità
+        e l'organizzazione del codice.
+      </p>
+      <button id="show-def">Mostra Definizione</button>
+      <button id="next-card" style="display: none">Prossima Flashcard</button>
+    </div>
 
-<script>
-    const flashcards = [
-        { term: "Modulo", definition: "Un modulo in JavaScript/TypeScript è un file che contiene codice che può essere importato ed esportato tra altri file, promuovendo la riusabilità e l'organizzazione del codice." },
-        { term: "Prototipi", definition: "Il prototipo è un meccanismo in JavaScript che permette di aggiungere metodi e proprietà agli oggetti. Ogni funzione ha una proprietà `prototype` che viene utilizzata per implementare l'ereditarietà." },
-        { term: "Catena Prototipale", definition: "La catena prototipale è il meccanismo mediante il quale gli oggetti in JavaScript possono ereditare proprietà e metodi da altri oggetti. Ogni oggetto ha un riferimento a un altro oggetto chiamato 'prototipo'." },
-        { term: "getPrototypeOf() e __proto__", definition: "`getPrototypeOf()` è un metodo che restituisce il prototipo (oggetto) collegato a un dato oggetto, equivalente alla proprietà `__proto__`, che indica il 'prototipo installato' di un oggetto. La proprietà `prototype` della funzione costruttore è il prototipo che verrà 'installato' sugli oggetti creati da quella funzione." },
-        { term: "Rappresentazione da Base 10 a Base 2", definition: "La conversione di un numero da base 10 a base 2 consiste nel dividere il numero per 2, registrare il resto, e ripetere fino a ottenere un quoziente di 0. I resti letti dal basso verso l'alto rappresentano il numero in binario." },
-        { term: "Matrici", definition: "In JavaScript, una matrice è una struttura dati che memorizza una collezione ordinata di elementi, accessibili tramite indice numerico." },
-        { term: "Lista", definition: "Una lista è una collezione ordinata di elementi, che in JavaScript può essere rappresentata da un array o una struttura dati simile." },
-        { term: "Spread Operator", definition: "Lo spread operator (`...`) in JavaScript consente di espandere un array o un oggetto in un luogo dove sono attesi più valori (ad esempio, parametri di funzione)." },
-        { term: "Rest Operator", definition: "Il rest operator (`...`) è utilizzato in una funzione per raccogliere un numero indefinito di argomenti in un singolo array." },
-        { term: "Complemento a 1 e 2", definition: "Il complemento a 1 di un numero binario inverte tutti i bit. Il complemento a 2 si ottiene aggiungendo 1 al complemento a 1, usato per rappresentare numeri negativi." },
-        { term: "Albero Binario", definition: "Un albero binario è una struttura dati in cui ogni nodo è rappresentato come `{ val, sx, dx }`, dove `val` è il valore del nodo, `sx` è il riferimento al figlio sinistro e `dx` è il riferimento al figlio destro." },
-        { term: "Binary Search", definition: "Il binary search è un algoritmo di ricerca efficiente che funziona solo su liste ordinate, dividendo ripetutamente a metà l'area di ricerca fino a trovare l'elemento cercato." },
-        { term: "Tupla", definition: "Una tupla è una collezione ordinata di elementi che può contenere elementi di diversi tipi di dati. In TypeScript, si definisce con una sintassi che specifica il tipo di ogni elemento." },
-        { term: "Oggetto", definition: "Un oggetto è una collezione di proprietà, dove ogni proprietà è una coppia chiave-valore. Gli oggetti possono contenere metodi, che sono funzioni associate all'oggetto." },
-        { term: "Pila", definition: "Una pila è una struttura dati che segue il principio LIFO (Last In, First Out), dove l'ultimo elemento inserito è il primo ad essere rimosso." },
-        { term: "Coda", definition: "Una coda è una struttura dati che segue il principio FIFO (First In, First Out), dove il primo elemento inserito è il primo ad essere rimosso." },
-        { term: "Notazione Prefissa", definition: "La notazione prefissa (o polacca) è una forma di esprimere espressioni matematiche dove l'operatore precede i suoi operandi." },
-        { term: "Notazione Infissa", definition: "La notazione infissa è la forma standard di scrittura delle espressioni matematiche, dove gli operatori si trovano tra gli operandi (es. 3 + 4)." },
-        { term: "Assegnamenti Destrutturanti", definition: "L'assegnamento destrutturante permette di estrarre valori da array o oggetti e assegnarli a variabili distinte, in una sola espressione." },
-        { term: "Funzione Costruttore", definition: "Una funzione costruttore in JavaScript è una funzione utilizzata per creare nuovi oggetti e inizializzarli con proprietà specificate. La proprietà `prototype` della funzione costruttore è il prototipo che verrà installato sugli oggetti creati con `new`." },
-        { term: "Classe", definition: "Le classi in JavaScript, introdotte in ES6, sono una sintassi più strutturata e moderna per definire oggetti e relazioni di ereditarietà. Offrono un'interfaccia più chiara e leggibile per creare e gestire oggetti, supportando concetti come il costruttore, l'ereditarietà (`extends`), e i metodi statici." },
-        { term: "Differenza tra Funzione Costruttore e Classe", definition: "**Funzione Costruttore**: Utilizzata per creare oggetti con la keyword `new`. Definisce proprietà e metodi direttamente su `this`. **Classe**: Sintassi moderna per definire oggetti e ereditarietà in modo più leggibile e strutturato, ma internamente basata sulle funzioni costruttore." },
-        { term: "Keyword 'new'", definition: "La keyword `new` viene utilizzata in JavaScript per creare una nuova istanza di un oggetto, utilizzando una funzione costruttore." },
-        { term: "Keyword 'this'", definition: "`this` è una keyword che si riferisce all'oggetto dal quale viene chiamato un metodo, variando il suo valore a seconda del contesto di esecuzione." },
-        { term: "Generatore", definition: "Un generatore è una funzione che può sospendere e riprendere la sua esecuzione, permettendo di iterare su una sequenza di valori mediante la keyword `yield`." },
-        { term: "Scoping delle Dichiarazioni", definition: "Lo scoping delle dichiarazioni definisce il contesto in cui le variabili e le funzioni sono visibili e accessibili, come il `block scope` con `let` e `const`, o il `function scope` con `var`." },
-        { term: "Rappresentazione Albero K-ario", definition: "Un albero k-ario è una struttura dati in cui ogni nodo è rappresentato come `{ val, figli[] }`, dove `val` è il valore del nodo e `figli` è un array che contiene i riferimenti ai nodi figli, fino a un massimo di `k` figli per nodo." },
-        { term: "Generics", definition: "I Generics in TypeScript permettono di creare componenti riutilizzabili che funzionano con vari tipi di dati, senza perdere la sicurezza del tipo. Un esempio comune è l'uso di `Array<T>` per indicare un array di elementi di tipo `T`." },
-        { term: "Promise", definition: "Una Promise è un oggetto che rappresenta il completamento o il fallimento di un'operazione asincrona e il suo valore risultante. Viene utilizzata per gestire operazioni asincrone in JavaScript." },
-        { term: "async/await", definition: "`async` e `await` sono parole chiave in JavaScript che semplificano il lavoro con Promises. `async` è utilizzato per dichiarare una funzione asincrona, e `await` per aspettare il completamento di una Promise." },
-        { term: "Closures", definition: "Una closure è una funzione che ha accesso alle variabili del suo scope esterno, anche dopo che la funzione esterna è stata eseguita. Questo permette di mantenere lo stato tra le chiamate di funzione." },
+    <script>
+      const flashcards = [
         {
-        term: "Valori Primitivi", 
-        definition: `
+          term: "Modulo",
+          definition:
+            "Un modulo in JavaScript/TypeScript è un file che contiene codice che può essere importato ed esportato tra altri file, promuovendo la riusabilità e l'organizzazione del codice.",
+        },
+        {
+          term: "Prototipi",
+          definition:
+            "Il prototipo è un meccanismo in JavaScript che permette di aggiungere metodi e proprietà agli oggetti. Ogni funzione ha una proprietà `prototype` che viene utilizzata per implementare l'ereditarietà.",
+        },
+        {
+          term: "Catena Prototipale",
+          definition:
+            "La catena prototipale è il meccanismo mediante il quale gli oggetti in JavaScript possono ereditare proprietà e metodi da altri oggetti. Ogni oggetto ha un riferimento a un altro oggetto chiamato 'prototipo'.",
+        },
+        {
+          term: "getPrototypeOf() e __proto__",
+          definition:
+            "`getPrototypeOf()` è un metodo che restituisce il prototipo (oggetto) collegato a un dato oggetto, equivalente alla proprietà `__proto__`, che indica il 'prototipo installato' di un oggetto. La proprietà `prototype` della funzione costruttore è il prototipo che verrà 'installato' sugli oggetti creati da quella funzione.",
+        },
+        {
+          term: "Rappresentazione da Base 10 a Base 2",
+          definition:
+            "La conversione di un numero da base 10 a base 2 consiste nel dividere il numero per 2, registrare il resto, e ripetere fino a ottenere un quoziente di 0. I resti letti dal basso verso l'alto rappresentano il numero in binario.",
+        },
+        {
+          term: "Matrici",
+          definition:
+            "In JavaScript, una matrice è una struttura dati che memorizza una collezione ordinata di elementi, accessibili tramite indice numerico.",
+        },
+        {
+          term: "Lista",
+          definition:
+            "Una lista è una collezione ordinata di elementi, che in JavaScript può essere rappresentata da un array o una struttura dati simile.",
+        },
+        {
+          term: "Spread Operator",
+          definition:
+            "Lo spread operator (`...`) in JavaScript consente di espandere un array o un oggetto in un luogo dove sono attesi più valori (ad esempio, parametri di funzione).",
+        },
+        {
+          term: "Rest Operator",
+          definition:
+            "Il rest operator (`...`) è utilizzato in una funzione per raccogliere un numero indefinito di argomenti in un singolo array.",
+        },
+        {
+          term: "Complemento a 1 e 2",
+          definition:
+            "Il complemento a 1 di un numero binario inverte tutti i bit. Il complemento a 2 si ottiene aggiungendo 1 al complemento a 1, usato per rappresentare numeri negativi.",
+        },
+        {
+          term: "Albero Binario",
+          definition:
+            "Un albero binario è una struttura dati in cui ogni nodo è rappresentato come `{ val, sx, dx }`, dove `val` è il valore del nodo, `sx` è il riferimento al figlio sinistro e `dx` è il riferimento al figlio destro.",
+        },
+        {
+          term: "Binary Search",
+          definition:
+            "Il binary search è un algoritmo di ricerca efficiente che funziona solo su liste ordinate, dividendo ripetutamente a metà l'area di ricerca fino a trovare l'elemento cercato.",
+        },
+        {
+          term: "Tupla",
+          definition:
+            "Una tupla è una collezione ordinata di elementi che può contenere elementi di diversi tipi di dati. In TypeScript, si definisce con una sintassi che specifica il tipo di ogni elemento.",
+        },
+        {
+          term: "Oggetto",
+          definition:
+            "Un oggetto è una collezione di proprietà, dove ogni proprietà è una coppia chiave-valore. Gli oggetti possono contenere metodi, che sono funzioni associate all'oggetto.",
+        },
+        {
+          term: "Pila",
+          definition:
+            "Una pila è una struttura dati che segue il principio LIFO (Last In, First Out), dove l'ultimo elemento inserito è il primo ad essere rimosso.",
+        },
+        {
+          term: "Coda",
+          definition:
+            "Una coda è una struttura dati che segue il principio FIFO (First In, First Out), dove il primo elemento inserito è il primo ad essere rimosso.",
+        },
+        {
+          term: "Notazione Prefissa",
+          definition:
+            "La notazione prefissa (o polacca) è una forma di esprimere espressioni matematiche dove l'operatore precede i suoi operandi.",
+        },
+        {
+          term: "Notazione Infissa",
+          definition:
+            "La notazione infissa è la forma standard di scrittura delle espressioni matematiche, dove gli operatori si trovano tra gli operandi (es. 3 + 4).",
+        },
+        {
+          term: "Assegnamenti Destrutturanti",
+          definition:
+            "L'assegnamento destrutturante permette di estrarre valori da array o oggetti e assegnarli a variabili distinte, in una sola espressione.",
+        },
+        {
+          term: "Funzione Costruttore",
+          definition:
+            "Una funzione costruttore in JavaScript è una funzione utilizzata per creare nuovi oggetti e inizializzarli con proprietà specificate. La proprietà `prototype` della funzione costruttore è il prototipo che verrà installato sugli oggetti creati con `new`.",
+        },
+        {
+          term: "Classe",
+          definition:
+            "Le classi in JavaScript, introdotte in ES6, sono una sintassi più strutturata e moderna per definire oggetti e relazioni di ereditarietà. Offrono un'interfaccia più chiara e leggibile per creare e gestire oggetti, supportando concetti come il costruttore, l'ereditarietà (`extends`), e i metodi statici.",
+        },
+        {
+          term: "Differenza tra Funzione Costruttore e Classe",
+          definition:
+            "**Funzione Costruttore**: Utilizzata per creare oggetti con la keyword `new`. Definisce proprietà e metodi direttamente su `this`. **Classe**: Sintassi moderna per definire oggetti e ereditarietà in modo più leggibile e strutturato, ma internamente basata sulle funzioni costruttore.",
+        },
+        {
+          term: "Keyword 'new'",
+          definition:
+            "La keyword `new` viene utilizzata in JavaScript per creare una nuova istanza di un oggetto, utilizzando una funzione costruttore.",
+        },
+        {
+          term: "Keyword 'this'",
+          definition:
+            "`this` è una keyword che si riferisce all'oggetto dal quale viene chiamato un metodo, variando il suo valore a seconda del contesto di esecuzione.",
+        },
+        {
+          term: "Generatore",
+          definition:
+            "Un generatore è una funzione che può sospendere e riprendere la sua esecuzione, permettendo di iterare su una sequenza di valori mediante la keyword `yield`.",
+        },
+        {
+          term: "Scoping delle Dichiarazioni",
+          definition:
+            "Lo scoping delle dichiarazioni definisce il contesto in cui le variabili e le funzioni sono visibili e accessibili, come il `block scope` con `let` e `const`, o il `function scope` con `var`.",
+        },
+        {
+          term: "Rappresentazione Albero K-ario",
+          definition:
+            "Un albero k-ario è una struttura dati in cui ogni nodo è rappresentato come `{ val, figli[] }`, dove `val` è il valore del nodo e `figli` è un array che contiene i riferimenti ai nodi figli, fino a un massimo di `k` figli per nodo.",
+        },
+        {
+          term: "Generics",
+          definition:
+            "I Generics in TypeScript permettono di creare componenti riutilizzabili che funzionano con vari tipi di dati, senza perdere la sicurezza del tipo. Un esempio comune è l'uso di `Array<T>` per indicare un array di elementi di tipo `T`.",
+        },
+        {
+          term: "Promise",
+          definition:
+            "Una Promise è un oggetto che rappresenta il completamento o il fallimento di un'operazione asincrona e il suo valore risultante. Viene utilizzata per gestire operazioni asincrone in JavaScript.",
+        },
+        {
+          term: "async/await",
+          definition:
+            "`async` e `await` sono parole chiave in JavaScript che semplificano il lavoro con Promises. `async` è utilizzato per dichiarare una funzione asincrona, e `await` per aspettare il completamento di una Promise.",
+        },
+        {
+          term: "Closures",
+          definition:
+            "Una closure è una funzione che ha accesso alle variabili del suo scope esterno, anche dopo che la funzione esterna è stata eseguita. Questo permette di mantenere lo stato tra le chiamate di funzione.",
+        },
+        {
+          term: "Valori Primitivi",
+          definition: `
         In JavaScript, i valori primitivi sono i tipi di dati basilari che non sono oggetti e non possono essere modificati. I principali valori primitivi sono:
         - **String**: Rappresenta una sequenza di caratteri. Esempio: "ciao", 'JavaScript'.
         - **Number**: Rappresenta sia numeri interi che numeri in virgola mobile. Esempio: 42, 3.14.
@@ -92,66 +224,72 @@
         - **Null**: Rappresenta intenzionalmente l'assenza di qualsiasi valore o oggetto. È un tipo primitivo che ha un solo valore: null.
         - **Symbol**: Introdotto in ES6, un Symbol è un identificatore unico e immutabile, utilizzato spesso come chiave per proprietà di oggetto.
         - **BigInt**: Introdotto in ES11 (ES2020), BigInt è un tipo che consente di rappresentare numeri interi più grandi di Number.MAX_SAFE_INTEGER. Viene creato aggiungendo n alla fine di un intero, ad esempio 123n.
-        `
-    },
-    { 
-        term: "Valori Mutabili", 
-        definition: `
+        `,
+        },
+        {
+          term: "Valori Mutabili",
+          definition: `
         In JavaScript, i valori mutabili sono i tipi di dati che possono essere modificati dopo essere stati creati. Gli oggetti e gli array sono esempi di valori mutabili. 
         Quando si modifica un oggetto o un array, si modifica direttamente il contenuto della struttura dati senza cambiare il riferimento.
-        `
-    },
-    { 
-        term: "for...in vs for...of", 
-        definition: `
+        `,
+        },
+        {
+          term: "for...in vs for...of",
+          definition: `
         - **for...in**: Viene utilizzato per iterare sulle proprietà enumerabili di un oggetto o sugli indici di un array. È più adatto per oggetti, ma può essere utilizzato anche sugli array, anche se non è raccomandato.
         - **for...of**: Viene utilizzato per iterare sugli elementi di un oggetto iterabile (come un array, una stringa, un set o una mappa). Non funziona sugli oggetti che non sono iterabili.
-        `
-    },
-    { 
-        term: "Eccezione", 
-        definition: `
+        `,
+        },
+        {
+          term: "Eccezione",
+          definition: `
         Un'eccezione in JavaScript è un errore che si verifica durante l'esecuzione di un programma. Quando viene generata un'eccezione, l'esecuzione del programma viene interrotta e il controllo passa al gestore delle eccezioni, se presente. 
-        Le eccezioni possono essere gestite usando `try...catch` per evitare che il programma termini inaspettatamente.
-        `
-    }
-    ];
+        Le eccezioni possono essere gestite usando 'try...catch' per evitare che il programma termini inaspettatamente.
+        `,
+        },
+      ];
 
-    let currentIndex = 0;
-    let shuffledFlashcards = shuffleArray([...flashcards]);
+      let currentIndex = 0;
+      let shuffledFlashcards = shuffleArray([...flashcards]);
 
-    function shuffleArray(array) {
+      function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-    }
+      }
 
-    document.getElementById("show-def").addEventListener("click", function() {
-        document.getElementById("definition").style.display = "block";
-        document.getElementById("show-def").style.display = "none";
-        document.getElementById("next-card").style.display = "inline-block";
-    });
+      document
+        .getElementById("show-def")
+        .addEventListener("click", function () {
+          document.getElementById("definition").style.display = "block";
+          document.getElementById("show-def").style.display = "none";
+          document.getElementById("next-card").style.display = "inline-block";
+        });
 
-    document.getElementById("next-card").addEventListener("click", function() {
-        currentIndex++;
-        if (currentIndex >= shuffledFlashcards.length) {
+      document
+        .getElementById("next-card")
+        .addEventListener("click", function () {
+          currentIndex++;
+          if (currentIndex >= shuffledFlashcards.length) {
             shuffledFlashcards = shuffleArray([...flashcards]);
             currentIndex = 0;
-        }
-        document.getElementById("term").innerText = shuffledFlashcards[currentIndex].term;
-        document.getElementById("definition").innerText = shuffledFlashcards[currentIndex].definition;
-        document.getElementById("definition").style.display = "none";
-        document.getElementById("show-def").style.display = "inline-block";
-        document.getElementById("next-card").style.display = "none";
-    });
+          }
+          document.getElementById("term").innerText =
+            shuffledFlashcards[currentIndex].term;
+          document.getElementById("definition").innerText =
+            shuffledFlashcards[currentIndex].definition;
+          document.getElementById("definition").style.display = "none";
+          document.getElementById("show-def").style.display = "inline-block";
+          document.getElementById("next-card").style.display = "none";
+        });
 
-    // Inizializza la prima flashcard
-    document.getElementById("term").innerText = shuffledFlashcards[currentIndex].term;
-    document.getElementById("definition").innerText = shuffledFlashcards[currentIndex].definition;
-
-</script>
-
-</body>
+      // Inizializza la prima flashcard
+      document.getElementById("term").innerText =
+        shuffledFlashcards[currentIndex].term;
+      document.getElementById("definition").innerText =
+        shuffledFlashcards[currentIndex].definition;
+    </script>
+  </body>
 </html>

@@ -9,3 +9,18 @@
 
 
 // La soluzione deve essere scritta in TypeScript, definendo opportunamente i tipi, e non usando any o unknown.
+
+namespace X {
+
+  // type Z<T> = { priority: number, others: T }
+
+  function enqueue<T>(e: T, queue: T[]) {
+    queue.push(e);
+    queue.sort((a: any, b: any) => a.priority - b.priority);
+  }
+
+  function dequeue<T>(queue: T[]): T | undefined {
+    return queue.pop();
+  }
+
+}

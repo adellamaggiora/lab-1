@@ -96,6 +96,6 @@ function contaAlbero(T: Tree | undefined): number {
     return 1 + nodiSottoAlberoDx + nodiSottoAlberoSx;
 }
 
-contaAlbero(Qa)
+contaAlbero(Qaa)
 
-console.log(Qa)
+console.log(Qaa)

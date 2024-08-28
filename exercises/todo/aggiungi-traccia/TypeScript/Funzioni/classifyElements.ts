@@ -17,3 +17,21 @@ function classifyElements < T > (a: T[], classifier: (x: T) => Category): object
     }
     return res
 }
+
+
+function classifyElements2<T>(a: T[], classifier: (el: T) => Category): Record<Category, T[]> {
+
+    let result: Record<Category, T[]> = {
+      negative: [],
+      neutral: [],
+      positive: []
+    }
+
+    for (const item of a) {
+      const classification = classifier(item)
+      result[classification].push(item)
+    }
+    
+    return result;
+
+  }

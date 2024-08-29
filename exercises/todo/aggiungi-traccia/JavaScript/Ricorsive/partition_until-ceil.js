@@ -13,3 +13,17 @@ function partition_until(arr, depth) {
     right = partition_until(right, depth - 1)
     return left.concat(right)
 }
+
+
+function partition_until(arr=[], depth=0) {
+    if (depth === 0 || arr.length === 1) {
+        return [arr]
+    }
+
+    const middle = Math.ceil(arr.length / 2);
+
+    const firstPart = arr.splice(0, middle);
+    const secondPart = arr;
+
+    return [...partition_until(firstPart, depth-1), ...partition_until(secondPart, depth-1)]
+}

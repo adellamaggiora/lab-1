@@ -28,3 +28,16 @@ function map_tree(tree, sx_fun, dx_fun) {
     }
     return apply_fun(tree, 'right')
 }
+
+function map_tree(tree, sxFun, dxFun) {
+    if (!tree) {
+        return;
+    }
+
+    const newVal = sxFun ? sxFun(tree.val) : tree.val;
+
+    const newSx = map_tree(tree.sx, sxFun, dxFun);  
+    const newDx = map_tree(tree.dx, dxFun, dxFun);
+
+    return { val: newVal, sx: newSx, dx: newDx };
+}

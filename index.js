@@ -1,37 +1,32 @@
-// restituisce il peso della radice
-function valuta(t) {
-    if (!t) {
-        return 0;
-    }
-    // Treat nodes with undefined or empty 'figli' as leaf nodes
-    if (t.figli === undefined) {
-        return t.val;
-    }
+function paripari(A) {
+
+    let result = [];
+
+    const isPari = n => n % 2 === 0
     
-    let peso = 0;
-    // Recursively compute the weight of each child and sum them up
-    for (const figlio of t.figli) {
-        peso += valuta(figlio);
+    for (let i=0; i<A.length; i++) {
+        const j = A.length - i;
+        if (isPari(i)) {
+            if (result.length === 0) {
+                const el = A[i];
+                if (isPari(el)) {
+                    result.push(el)   
+                }
+            }
+        }
+        if (isPari(j)) {
+            const el = A[j];
+            if (isPari(el)) {
+                result.push(el);
+                break;
+            }
+        }
     }
-    // Apply the function stored in 'val' to the sum of child weights,
-    // ensuring that 'this' inside 't.val' refers to the current node 't'
-    return t.val.call(t, peso);
+
+    return result;
+
 }
 
+var AR=[1,4,2,7,23,5,1,7,3,4,4,6,10,2,5]
 
-function valuta(t) {
-    if(!t) {
-        return 0;
-    }
-    if(t.figli === undefined) {
-        return t.val;
-    }   
-
-    let peso = 0
-    
-    for (const figlio of t.figli) {
-        peso += valuta(figlio)
-    }
-
-    return t.val(peso)
-}
+console.log(paripari(AR))

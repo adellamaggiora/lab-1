@@ -1,32 +1,71 @@
-function paripari(A) {
-
-    let result = [];
-
-    const isPari = n => n % 2 === 0
-    
-    for (let i=0; i<A.length; i++) {
-        const j = A.length - i;
-        if (isPari(i)) {
-            if (result.length === 0) {
-                const el = A[i];
-                if (isPari(el)) {
-                    result.push(el)   
-                }
+let Q = {
+    val: 2,
+    sx: {
+        val: 4,
+        sx: {
+            val: 6
+        },
+        dx: {
+            val: 6,
+            dx: {
+                val: 8
             }
         }
-        if (isPari(j)) {
-            const el = A[j];
-            if (isPari(el)) {
-                result.push(el);
-                break;
-            }
+    },
+    dx: {
+        val: 7,
+        sx: {
+            val: 8
         }
     }
+};
 
-    return result;
+// T: { val, sx, dx }
+// function livelloDispari(T) {
+//     if (!T) {
+//         return -1;
+//     }
+//     if (!T.sx && !T.dx) {
+//         T.alt = 0;
+//         return 0;
+//     }
 
+//     const alt = 1 + Math.max(livelloDispari(T.sx), livelloDispari(T.dx));
+//     T.alt = alt;
+//     return alt
+// }
+
+function calcolaAltezza(T) {
+    if (!T) {
+        return -1;
+    }
+    if (!T.sx && !T.dx) {
+        T.alt = 0;
+        return T.alt;
+    }
+
+    T.alt = 1 + Math.max(calcolaAltezza(T.sx), calcolaAltezza(T.dx));
+    return T.alt;
 }
 
-var AR=[1,4,2,7,23,5,1,7,3,4,4,6,10,2,5]
+function calcolaLivello(T, altezzaTot) {
+    if (!T) {
+        return altezzaTot;
+    }
+    if (!T.sx && !T.dx) {
+        T.liv = altezzaTot - T.alt;
+        return T.liv;
+    }
 
-console.log(paripari(AR))
+    T.liv = altezzaTot - Math.max(calcolaLivello(T.sx, altezzaTot), calcolaLivello(T.dx, altezzaTot));
+    return T.liv;
+}
+
+function main(T) {
+    const altezzaTot = calcolaAltezza(T);
+    // const livello = calcolaLivello(T, altezzaTot);
+    return T
+}
+
+main(Q)
+console.log(JSON.stringify(Q, null, 3))

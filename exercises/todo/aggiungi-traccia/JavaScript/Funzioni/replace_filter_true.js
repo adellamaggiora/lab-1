@@ -25,3 +25,27 @@ function replace_filter(f, g) { // Non rispetta la consegna effettiva di non usa
     }
 } 
 */
+
+
+function filter_replace(f, g) {
+
+    return (A) => {
+
+        const B = []
+        const C = []
+
+        for (const a of A) {
+            if (g(a)) {
+                B.push(a)
+            }
+        }
+
+        for (const b of B) {
+            const el = f(b);
+            C.push(el)
+        }
+
+        return C
+    }
+
+}
